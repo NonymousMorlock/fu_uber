@@ -4,11 +4,14 @@ import 'dart:math' as Math;
 
 import 'package:fu_uber/Core/Constants/Constants.dart';
 import 'package:fu_uber/Core/Utils/LogUtils.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart' as http;
 import 'package:vector_math/vector_math.dart';
+
+typedef GeoPlaceMark = geocoding.Placemark;
+typedef GeoLocation = geocoding.Location;
 
 class MapRepository {
   static const TAG = "MapRepository";
@@ -17,7 +20,7 @@ class MapRepository {
   Future<String> getRouteCoordinates(LatLng l1, LatLng l2) async {
     String url =
         "https://maps.googleapis.com/maps/api/directions/json?origin=${l1.latitude},${l1.longitude}&destination=${l2.latitude},${l2.longitude}&key=${Constants.anotherApiKey}";
-    http.Response response = await http.get(url);
+    http.Response response = await http.get(Uri.parse(url));
     Map values = jsonDecode(response.body);
     ProjectLog.logIt(TAG, "Predictions", values.toString());
     return values["routes"][0]["overview_polyline"]["points"];
@@ -29,18 +32,40 @@ class MapRepository {
   }
 
   Future<String> getPlaceNameFromLatLng(LatLng latLng) async {
-    List<Placemark> placemark = await Geolocator()
-        .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    return placemark[0].name +
-        ", " +
-        placemark[0].locality +
-        ", " +
-        placemark[0].country;
+    List<GeoPlaceMark> placeMarks = await geocoding.placemarkFromCoordinates(
+      latLng.latitude,
+      latLng.longitude,
+    );
+    // return placemark[0].name +
+    //     ", " +
+    //     placemark[0].locality +
+    //     ", " +
+    //     placemark[0].country;
+    // considering null safety
+    final placeMark = placeMarks.first;
+    final sb = StringBuffer();
+    if (placeMark.name != null) {
+      sb.write(placeMark.name);
+    }
+    if (placeMark.locality != null) {
+      if (placeMark.name != null) {
+        sb.write(", ");
+      }
+      sb.write(placeMark.locality);
+    }
+    if (placeMark.country != null) {
+      if (placeMark.name != null || placeMark.locality != null) {
+        sb.write(", ");
+      }
+      sb.write(placeMark.country);
+    }
+    return sb.toString();
   }
 
   Future<LatLng> getLatLngFromAddress(String address) async {
-    List<Placemark> list = await Geolocator().placemarkFromAddress(address);
-    return LatLng(list[0].position.latitude, list[0].position.longitude);
+    List<GeoLocation> list = await geocoding.locationFromAddress(address);
+    // return LatLng(list[0].position.latitude, list[0].position.longitude);
+    return LatLng(list.first.latitude, list.first.longitude);
   }
 
   LatLng getMidPointBetween(LatLng one, LatLng two) {
