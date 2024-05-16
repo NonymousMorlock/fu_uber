@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fu_uber/Core/Constants/Constants.dart';
 import 'package:fu_uber/Core/Constants/DemoData.dart';
 import 'package:fu_uber/Core/Constants/colorConstants.dart';
@@ -15,14 +13,13 @@ class RideBookedModel extends ChangeNotifier {
   /// Tag for Logs
   static const TAG = "MapModel";
 
-  GoogleMapController _mapController;
   MapRepository mapRepository = MapRepository();
 
   /// Origin Latitude and Longitude
-  LatLng originLatLng;
+  LatLng? originLatLng;
 
   /// Destination Latitude and Longitude
-  LatLng destinationLatLng;
+  LatLng? destinationLatLng;
 
   /// Default Camera Zoom
   double currentZoom = 19;
@@ -52,10 +49,6 @@ class RideBookedModel extends ChangeNotifier {
   /// OnGoing Map
   onMapCreated(GoogleMapController controller) {
     ProjectLog.logIt(TAG, "onMapCreated", "null");
-    _mapController = controller;
-    rootBundle.loadString('assets/mapStyle.txt').then((string) {
-      _mapController.setMapStyle(string);
-    });
     listenToRideLocationUpdate();
     addAllMarkers();
     createOriginDestinationRoute();
@@ -67,8 +60,9 @@ class RideBookedModel extends ChangeNotifier {
   onCameraMove(CameraPosition position) {}
 
   void createOriginDestinationRoute() async {
+    if (originLatLng == null || destinationLatLng == null) return;
     await mapRepository
-        .getRouteCoordinates(originLatLng, destinationLatLng)
+        .getRouteCoordinates(originLatLng!, destinationLatLng!)
         .then((route) {
       createCurrentRoute(route, Constants.currentRoutePolylineId,
           ConstantColors.PrimaryColor, 3);
@@ -77,8 +71,9 @@ class RideBookedModel extends ChangeNotifier {
   }
 
   void createOriginDriverLocationRoute() async {
+    if (originLatLng == null) return;
     await mapRepository
-        .getRouteCoordinates(originLatLng, driverLatLng)
+        .getRouteCoordinates(originLatLng!, driverLatLng)
         .then((route) {
       createCurrentRoute(route, Constants.driverOriginPolyId, Colors.green, 5);
       notifyListeners();
@@ -86,8 +81,8 @@ class RideBookedModel extends ChangeNotifier {
   }
 
   ///Creating a Route
-  void createCurrentRoute(String encodedPoly, String polyId, Color color,
-      int width) {
+  void createCurrentRoute(
+      String encodedPoly, String polyId, Color color, int width) {
     ProjectLog.logIt(TAG, "createCurrentRoute", encodedPoly);
     _polyLines.add(Polyline(
         polylineId: PolylineId(polyId),
@@ -99,16 +94,17 @@ class RideBookedModel extends ChangeNotifier {
   }
 
   void addAllMarkers() async {
+    if (originLatLng == null || destinationLatLng == null) return;
     _markers.add(Marker(
         markerId: MarkerId(Constants.pickupMarkerId),
-        position: originLatLng,
+        position: originLatLng!,
         flat: true,
         icon: BitmapDescriptor.fromBytes(
           await Utils.getBytesFromAsset("images/pickupIcon.png", 70),
         )));
     _markers.add(Marker(
         markerId: MarkerId(Constants.destinationMarkerId),
-        position: destinationLatLng,
+        position: destinationLatLng!,
         flat: true,
         icon: BitmapDescriptor.fromBytes(
           await Utils.getBytesFromAsset("images/destinationIcon.png", 70),
