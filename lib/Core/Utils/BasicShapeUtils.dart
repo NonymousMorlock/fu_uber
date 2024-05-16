@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ShapeUtils {
@@ -13,6 +12,6 @@ class ShapeUtils {
       side: new BorderSide(color: Colors.white, width: 2.0),
       borderRadius: BorderRadius.circular(4.0));
 
-  static RoundedRectangleBorder rounderCard = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0));
+  static RoundedRectangleBorder rounderCard =
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0));
 }
