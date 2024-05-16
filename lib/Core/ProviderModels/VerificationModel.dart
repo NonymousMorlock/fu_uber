@@ -3,8 +3,8 @@ import 'package:fu_uber/Core/Enums/Enums.dart';
 import 'package:fu_uber/Core/Repository/Repository.dart';
 
 class VerificationModel extends ChangeNotifier {
-  String phoneNumber;
-  String otp;
+  late String phoneNumber;
+  late String otp;
 
   bool ifOtpHasError = true;
   bool showCircularLoader = false;
