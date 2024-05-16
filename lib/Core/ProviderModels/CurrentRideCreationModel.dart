@@ -5,15 +5,13 @@ class CurrentRideCreationModel extends ChangeNotifier {
   RideType selectedRideType;
   bool riderFound = false;
 
-  CurrentRideCreationModel() {
-    selectedRideType = RideType.Classic;
-  }
+  CurrentRideCreationModel() : selectedRideType = RideType.Classic;
 
   String getEstimationFromOriginDestination() {
     return "200";
   }
 
-  carTypeChanged(int index) {
+  carTypeChanged(int index, _) {
     selectedRideType = RideType.values[index];
     notifyListeners();
   }
