@@ -7,11 +7,10 @@ class Driver {
   String driverId;
   CarDetail carDetail;
   LatLng
-  currentLocation; //location should be of Location Type, for more data, not LatLng
+      currentLocation; //location should be of Location Type, for more data, not LatLng
 
   Driver(this.driverName, this.driverImage, this.driverRating, this.driverId,
-      this.carDetail,
-      this.currentLocation);
+      this.carDetail, this.currentLocation);
 }
 
 class CarDetail {
