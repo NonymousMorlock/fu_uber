@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fu_uber/Core/Constants/DemoData.dart';
 import 'package:fu_uber/Core/Models/UserDetails.dart';
 import 'package:fu_uber/UI/shared/CircularFlatButton.dart';
@@ -21,9 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     UserDetails currentUser = DemoData.currentUserDetails;
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
     return Material(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -145,7 +140,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   )
                 ],
               ),
-
             ],
           ),
         ),
