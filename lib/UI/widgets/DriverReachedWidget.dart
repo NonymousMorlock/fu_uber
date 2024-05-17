@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:fu_uber/Core/ProviderModels/RideBookedModel.dart';
 import 'package:fu_uber/UI/views/MainScreen.dart';
 import 'package:provider/provider.dart';
@@ -54,8 +52,8 @@ class DriverReachedWidget extends StatelessWidget {
                         width: 70,
                         height: 80,
                         child: ClipOval(
-                          child: Image.asset(
-                            "images/reached.png",
+                          child: Image.network(
+                            "https://picsum.photos/1080/720",
                             fit: BoxFit.fitHeight,
                           ),
                         ),
