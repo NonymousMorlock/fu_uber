@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fu_uber/Core/ProviderModels/RideBookedModel.dart';
 import 'package:fu_uber/UI/views/MainScreen.dart';
@@ -55,7 +54,7 @@ class DriverDetailsWithPin extends StatelessWidget {
                         child: ClipOval(
                           child: FadeInImage(
                             placeholder:
-                            AssetImage("images/destinationIcon.png"),
+                                AssetImage("images/destinationIcon.png"),
                             image: NetworkImage(
                                 rideBookedModel.currentDriver.driverImage),
                             fit: BoxFit.fill,
@@ -83,28 +82,20 @@ class DriverDetailsWithPin extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              rideBookedModel.currentDriver.driverName + " ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              rideBookedModel.currentDriver.driverRating
-                                  .toString() +
-                                  " \u2605",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                        FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(
+                            rideBookedModel.currentDriver.driverName +
+                                " "
+                                    "" +
+                                rideBookedModel.currentDriver.driverRating
+                                    .toString() +
+                                " \u2605",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                         Text(
                           rideBookedModel
