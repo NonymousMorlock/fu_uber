@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fu_uber/Core/ProviderModels/VerificationModel.dart';
 import 'package:fu_uber/Core/Utils/LogUtils.dart';
@@ -58,7 +57,9 @@ class _SignInPageState extends State<SignInPage> {
                     cursorWidth: 2,
                     onFieldSubmitted: verificationModel.setPhoneNumber,
                     validator: (value) {
-                      if (value.length < 10 || value.length > 13) {
+                      if (value == null ||
+                          value.length < 10 ||
+                          value.length > 13) {
                         return "Enter a Valid Phone Number";
                       } else
                         return null;
@@ -90,7 +91,7 @@ class _SignInPageState extends State<SignInPage> {
             ),
             InkResponse(
               onTap: () {
-                if (_phoneFormKey.currentState.validate())
+                if (_phoneFormKey.currentState!.validate())
                   verificationModel.updateCircularLoading(true);
                 Future.delayed(Duration(seconds: 5)).then((_) {
                   verificationModel.handlePhoneVerification().then((response) {
@@ -106,8 +107,13 @@ class _SignInPageState extends State<SignInPage> {
                         builder: (context) => OtpBottomSheet(),
                       );
                     } else {
-                      _scaffoldKey.currentState.showSnackBar(SnackBar(
-                          content: Text("Something Went Wrong.. Retry!")));
+                      ScaffoldMessenger.of(context)
+                        ..removeCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(
+                            content: Text("Something Went Wrong.. Retry!"),
+                          ),
+                        );
                     }
                   });
                 });
