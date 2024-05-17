@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fu_uber/Core/Constants/colorConstants.dart';
-import 'package:fu_uber/Core/ProviderModels/CurrentRideCreationModel.dart';
 import 'package:fu_uber/Core/ProviderModels/UINotifiersModel.dart';
 import 'package:provider/provider.dart';
 
@@ -14,8 +13,6 @@ class _SearchingRideBoxState extends State<SearchingRideBox>
   @override
   Widget build(BuildContext context) {
     final uiNotifier = Provider.of<UINotifiersModel>(context);
-    final currentRideDetailsModel =
-    Provider.of<CurrentRideCreationModel>(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -57,11 +54,13 @@ class _SearchingRideBoxState extends State<SearchingRideBox>
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                      child: FlatButton(
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ConstantColors.PrimaryColor,
+                          ),
                           onPressed: () {
                             uiNotifier.searchingRideNotify();
                           },
-                          color: ConstantColors.PrimaryColor,
                           child: Text(
                             "Cancel",
                             style: TextStyle(color: Colors.white, fontSize: 20),
