@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fu_uber/UI/widgets/PredictionItemView.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -12,11 +11,14 @@ typedef onListItemTap = void Function(Prediction prediction);
 class PredictionListAutoComplete extends StatefulWidget {
   final TextField textField;
   final List<Prediction> data;
-  final onListItemTap itemTap;
+  final onListItemTap? itemTap;
 
-  PredictionListAutoComplete(
-      {Key key, @required this.textField, @required this.data, this.itemTap})
-      : super(key: key);
+  PredictionListAutoComplete({
+    super.key,
+    required this.textField,
+    this.data = const [],
+    this.itemTap,
+  });
 
   @override
   _PredictionListAutoCompleteState createState() =>
@@ -33,27 +35,28 @@ class _PredictionListAutoCompleteState
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         widget.textField,
-        widget.data != null && widget.data.isNotEmpty
-            ? Column(
-          children: <Widget>[
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.data.length,
-                itemBuilder: (BuildContext ctxt, int index) {
-                  return InkResponse(
-                      onTap: () => widget.itemTap(widget.data[index]),
-                      child: PredictionItemView(
-                          prediction: widget.data[index]));
-                }),
-            ListTile(
-              title: Text("Powered By Google"),
-            )
-          ],
-        )
-            : SizedBox(
-          height: 0,
-          width: 0,
-        ),
+        if (widget.data.isNotEmpty)
+          Column(
+            children: <Widget>[
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.data.length,
+                  itemBuilder: (_, index) {
+                    return InkResponse(
+                        onTap: () => widget.itemTap?.call(widget.data[index]),
+                        child:
+                            PredictionItemView(prediction: widget.data[index]));
+                  }),
+              ListTile(
+                title: Text("Powered By Google"),
+              )
+            ],
+          )
+        else
+          SizedBox(
+            height: 0,
+            width: 0,
+          ),
       ],
     );
   }
