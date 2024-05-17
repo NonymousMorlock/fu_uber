@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:fu_uber/Core/Constants/colorConstants.dart';
 import 'package:fu_uber/Core/ProviderModels/MapModel.dart';
 import 'package:fu_uber/Core/ProviderModels/PermissionHandlerModel.dart';
@@ -16,14 +17,8 @@ class LocationPermissionScreen extends StatefulWidget {
 
 class _LocationPermissionScreenState extends State<LocationPermissionScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController loadingController;
-  Animation<double> animation;
-
-  @override
-  void dispose() {
-    loadingController.dispose();
-    super.dispose();
-  }
+  late AnimationController loadingController;
+  late Animation<double> animation;
 
   @override
   void initState() {
@@ -40,75 +35,96 @@ class _LocationPermissionScreenState extends State<LocationPermissionScreen>
     loadingController.forward();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final permModel = Provider.of<PermissionHandlerModel>(context);
-    final mapModel = Provider.of<MapModel>(context);
-
-    return Material(
-      child: Container(
-        child: Stack(
-          children: <Widget>[
-            SpringEffect(),
-            permModel.isLocationPerGiven
-                ? Align(
-              alignment: Alignment(0, 0.5),
-              child: permModel.isLocationSerGiven
-                  ? Text("Fetching Location...")
-                  : InkResponse(
-                onTap: () {
-                  permModel.requestLocationServiceToEnable();
-                  mapModel.randomMapZoom();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Container(
-                    color: ConstantColors.PrimaryColor,
-                    height: 40,
-                    width: double.infinity,
-                    child: Text(
-                      "Location Service Not Enabled",
-                      style: TextStyle(
-                          fontSize: 20, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            )
-                : Align(
-              alignment: Alignment.bottomCenter,
-              child: InkResponse(
-                onTap: () {
-                  permModel.requestAppLocationPermission();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Container(
-                    color: ConstantColors.PrimaryColor,
-                    height: 60,
-                    width: double.infinity,
-                    child: Center(
-                        child: Text(
-                          "Location Permission is Not Given",
-                          style: TextStyle(fontSize: 15, color: Colors.white),
-                        )),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
+  NavigatorState? currentNavigator;
+  MapModel? mapModel;
 
   @override
   void didChangeDependencies() {
-    final mapModel = Provider.of<MapModel>(context);
-    if (mapModel.currentPosition != null) {
-      Navigator.of(context).pushReplacementNamed(MainScreen.route);
-    }
     super.didChangeDependencies();
+    currentNavigator = Navigator.of(context);
+    mapModel = context.read<MapModel>();
+    mapModel?.addListener(() {
+      if (!mapModel!.isInitialized && mapModel!.currentPosition != null) {
+        mapModel!.initialize();
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          currentNavigator?.pushReplacementNamed(MainScreen.route);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    loadingController.dispose();
+    currentNavigator = null;
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final permModel = Provider.of<PermissionHandlerModel>(context);
+    // final mapModel = Provider.of<MapModel>(context);
+
+    return Consumer<MapModel>(builder: (_, mapModel, __) {
+      return Consumer<PermissionHandlerModel>(builder: (_, permModel, __) {
+        return Material(
+          child: Container(
+            child: Stack(
+              children: <Widget>[
+                SpringEffect(),
+                permModel.isLocationPerGiven
+                    ? Align(
+                        alignment: Alignment(0, 0.5),
+                        child: permModel.isLocationSerGiven
+                            ? Text("Fetching Location...")
+                            : InkResponse(
+                                onTap: () {
+                                  permModel.requestLocationServiceToEnable();
+                                  mapModel.randomMapZoom();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Container(
+                                    color: ConstantColors.PrimaryColor,
+                                    height: 40,
+                                    width: double.infinity,
+                                    child: Text(
+                                      "Location Service Not Enabled",
+                                      style: TextStyle(
+                                          fontSize: 20, color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      )
+                    : Align(
+                        alignment: Alignment.bottomCenter,
+                        child: InkResponse(
+                          onTap: () {
+                            permModel.requestAppLocationPermission();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              color: ConstantColors.PrimaryColor,
+                              height: 60,
+                              width: double.infinity,
+                              child: Center(
+                                  child: Text(
+                                "Location Permission is Not Given",
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.white),
+                              )),
+                            ),
+                          ),
+                        ),
+                      )
+              ],
+            ),
+          ),
+        );
+      });
+    });
   }
 }
 
@@ -118,10 +134,10 @@ class SpringEffect extends StatefulWidget {
 }
 
 class SpringState extends State<SpringEffect> with TickerProviderStateMixin {
-  AnimationController controller;
-  AnimationController controller2;
-  Animation<double> animation;
-  SpringSimulation simulation;
+  late AnimationController controller;
+  late AnimationController controller2;
+  late Animation<double> animation;
+  late SpringSimulation simulation;
   double _position = 0;
 
   @override
