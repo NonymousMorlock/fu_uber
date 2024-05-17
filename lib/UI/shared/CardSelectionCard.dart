@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fu_uber/Core/Models/CarTypeMenu.dart';
 import 'package:fu_uber/Core/Utils/BasicShapeUtils.dart';
@@ -6,8 +5,8 @@ import 'package:fu_uber/Core/Utils/BasicShapeUtils.dart';
 class CarSelectionCard extends StatelessWidget {
   final CarTypeMenu carTypeMenu;
 
-  const CarSelectionCard({Key key, this.carTypeMenu})
-      : super(key: key);
+  const CarSelectionCard({super.key, required this.carTypeMenu});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
