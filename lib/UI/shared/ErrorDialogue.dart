@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ErrorDialogue extends StatelessWidget {
@@ -6,8 +5,7 @@ class ErrorDialogue extends StatelessWidget {
   final String errorMessage;
 
   const ErrorDialogue(
-      {Key key, @required this.errorMessage, @required this.errorTitle})
-      : super(key: key);
+      {super.key, required this.errorMessage, required this.errorTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +14,8 @@ class ErrorDialogue extends StatelessWidget {
       title: Text(errorTitle),
       content: Text(errorMessage),
       actions: <Widget>[
-        RaisedButton(
-          color: Colors.black87,
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.black87),
           onPressed: () {
             Navigator.of(context).pop();
           },
