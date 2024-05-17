@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fu_uber/Core/ProviderModels/VerificationModel.dart';
 import 'package:fu_uber/UI/shared/ErrorDialogue.dart';
@@ -7,7 +6,6 @@ import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'package:provider/provider.dart';
 
 class OtpBottomSheet extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final verificationModel = Provider.of<VerificationModel>(context);
@@ -33,22 +31,22 @@ class OtpBottomSheet extends StatelessWidget {
             maxLength: 4,
             hasError: verificationModel.ifOtpHasError,
             maskCharacter: "*",
-            pinCodeTextFieldLayoutType:
-            PinCodeTextFieldLayoutType.AUTO_ADJUST_WIDTH,
             wrapAlignment: WrapAlignment.start,
             pinBoxDecoration:
-            ProvidedPinBoxDecoration.underlinedPinBoxDecoration,
+                ProvidedPinBoxDecoration.underlinedPinBoxDecoration,
             pinTextStyle: TextStyle(fontSize: 30.0),
             pinTextAnimatedSwitcherTransition:
-            ProvidedPinBoxTextAnimation.scalingTransition,
+                ProvidedPinBoxTextAnimation.scalingTransition,
             pinTextAnimatedSwitcherDuration: Duration(milliseconds: 200),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(15),
-          child: RaisedButton(
-            disabledColor: Colors.black87,
-            color: Colors.black87,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              disabledBackgroundColor: Colors.black87,
+              backgroundColor: Colors.black87,
+            ),
             onPressed: () {
               verificationModel
                   .setOtp(verificationModel.oTPTextController.text);
@@ -67,7 +65,7 @@ class OtpBottomSheet extends StatelessWidget {
                           return ErrorDialogue(
                             errorTitle: "Wrong OTP",
                             errorMessage:
-                            "The OTP you entered is wrong please recheck and try again.",
+                                "The OTP you entered is wrong please recheck and try again.",
                           );
                         });
                   }
@@ -85,9 +83,9 @@ class OtpBottomSheet extends StatelessWidget {
           child: verificationModel.shopCircularLoaderOTP
               ? CircularProgressIndicator()
               : SizedBox(
-            width: 0,
-            height: 0,
-          ),
+                  width: 0,
+                  height: 0,
+                ),
         )
       ],
     );
