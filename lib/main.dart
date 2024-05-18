@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fu_uber/Core/ProviderModels/CurrentRideCreationModel.dart';
 import 'package:fu_uber/Core/ProviderModels/MapModel.dart';
 import 'package:fu_uber/Core/ProviderModels/NearbyDriversModel.dart';
@@ -7,6 +8,7 @@ import 'package:fu_uber/Core/ProviderModels/RideBookedModel.dart';
 import 'package:fu_uber/Core/ProviderModels/UINotifiersModel.dart';
 import 'package:fu_uber/Core/ProviderModels/UserDetailsModel.dart';
 import 'package:fu_uber/Core/ProviderModels/VerificationModel.dart';
+import 'package:fu_uber/Core/Utils/types/map_style.dart';
 import 'package:fu_uber/UI/views/LocationPermissionScreen.dart';
 import 'package:fu_uber/UI/views/MainScreen.dart';
 import 'package:fu_uber/UI/views/OnGoingRideScreen.dart';
@@ -14,10 +16,15 @@ import 'package:fu_uber/UI/views/ProfileScreen.dart';
 import 'package:fu_uber/UI/views/SignIn.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final mapStyle = await rootBundle.loadString('assets/mapStyle.txt');
+  return runApp(
+    Provider<MapStyle>.value(value: MapStyle(mapStyle), child: MyApp()),
+  );
+}
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
-
 
 class MyApp extends StatelessWidget {
   static const String TAG = "MyApp";
@@ -28,32 +35,35 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PermissionHandlerModel>(
-          builder: (context) => PermissionHandlerModel(),
+          create: (context) => PermissionHandlerModel(),
         ),
         ChangeNotifierProvider<MapModel>(
-          builder: (context) => MapModel(),
+          create: (context) => MapModel(),
         ),
         ChangeNotifierProxyProvider<MapModel, RideBookedModel>(
-            initialBuilder: (_) => RideBookedModel(),
-            builder: (_, foo, bar) {
-              bar.originLatLng = foo.pickupPosition;
-              bar.destinationLatLng = foo.destinationPosition;
-              return bar;
+            create: (_) => RideBookedModel(),
+            update: (_, foo, bar) {
+              if (foo.pickupPosition != null &&
+                  foo.destinationPosition != null) {
+                bar?.originLatLng = foo.pickupPosition!;
+                bar?.destinationLatLng = foo.destinationPosition!;
+              }
+              return bar ?? RideBookedModel();
             }),
         ChangeNotifierProvider<VerificationModel>(
-          builder: (context) => VerificationModel(),
+          create: (context) => VerificationModel(),
         ),
         ChangeNotifierProvider<NearbyDriversModel>(
-          builder: (context) => NearbyDriversModel(),
+          create: (context) => NearbyDriversModel(),
         ),
         ChangeNotifierProvider<UserDetailsModel>(
-          builder: (context) => UserDetailsModel(),
+          create: (context) => UserDetailsModel(),
         ),
         ChangeNotifierProvider<CurrentRideCreationModel>(
-          builder: (context) => CurrentRideCreationModel(),
+          create: (context) => CurrentRideCreationModel(),
         ),
         ChangeNotifierProvider<UINotifiersModel>(
-          builder: (context) => UINotifiersModel(),
+          create: (context) => UINotifiersModel(),
         )
       ],
       child: MaterialApp(
