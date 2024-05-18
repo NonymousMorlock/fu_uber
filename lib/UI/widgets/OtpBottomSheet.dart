@@ -6,6 +6,8 @@ import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'package:provider/provider.dart';
 
 class OtpBottomSheet extends StatelessWidget {
+  const OtpBottomSheet({super.key});
+
   @override
   Widget build(BuildContext context) {
     final verificationModel = Provider.of<VerificationModel>(context);
